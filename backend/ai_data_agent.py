@@ -87,6 +87,16 @@ async def generate_and_insert(pool):
             merchant_category, account_id, "ensemble", 
             round(normalized_if_score, 2), round(lstm_score, 2), ensemble_score, 
             confidence_score, ai_explanation, status, flagged_at)
+            
+            # Keep database small (max 100 transactions) to never hit free tier limits
+            await conn.execute('''
+                DELETE FROM transactions 
+                WHERE id IN (
+                    SELECT id FROM transactions 
+                    ORDER BY flagged_at DESC 
+                    OFFSET 100
+                )
+            ''')
         print(f"[{datetime.now().strftime('%H:%M:%S')}] 🚨 FLAGGED & INJECTED: {ref} | Amount: ${amount:,.2f} | Score: {ensemble_score}")
     else:
         print(f"[{datetime.now().strftime('%H:%M:%S')}] ✅ Normal (Ignored): {ref} | Amount: ${amount:,.2f} | Score: {ensemble_score}")
