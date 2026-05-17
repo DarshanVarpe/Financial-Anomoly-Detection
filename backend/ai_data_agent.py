@@ -96,7 +96,9 @@ async def main():
     print("🔌 Connecting to local FraudOS Database...")
     pool = await asyncpg.create_pool(
         dsn=DB_CON_STR,
-        server_settings={'search_path': 'rahul, public'}
+        server_settings={'search_path': 'rahul, public'},
+        min_size=1,
+        max_size=3
     )
     
     print("🚀 AI Data Agent is LIVE! Injecting a new transaction every 10 seconds...")

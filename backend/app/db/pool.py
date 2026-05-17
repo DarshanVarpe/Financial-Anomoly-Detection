@@ -62,8 +62,8 @@ async def lifespan(app: FastAPI):
     _pool = await asyncpg.create_pool(
         **conn_kwargs,
         ssl=ssl_ctx,
-        min_size=2,
-        max_size=10,
+        min_size=1,
+        max_size=5,
         command_timeout=30,
         statement_cache_size=0,   # required for Aiven PgBouncer proxy
         server_settings={'search_path': f'{DB_SCHEMA}, public'}
