@@ -1,0 +1,571 @@
+{
+  "title": "Rahul — Fraud Investigation Agent walkthrough",
+  "description": "End-to-end tour of the FraudOS — AEGIS.AI fraud detection platform. Walks Rahul's seven screens: home desktop, AI fraud detection dashboard, flagged transaction review queue, transaction description (read-only), compliance reports, model performance, and threshold configuration.",
+  "meta": {
+    "dashboardVersion": "1.0",
+    "author": "Rahul",
+    "targetAudience": "Fraud investigators, compliance reviewers, model risk leads",
+    "pacingNote": "Pauses kept short. Real-time fraud data refreshes continuously, so each screen has visible activity in the Live Activity feed and the dashboard chart."
+  },
+  "steps": [
+    {
+      "id": "intro",
+      "description": "Opening line with no UI action — sets the stage as Agent Rahul, the virtual humanoid for the FraudOS — AEGIS.AI fraud detection platform.",
+      "action": "none",
+      "speak": {
+        "before": "Hi, I'm Rahul. I help fraud investigators review suspicious transactions, understand why they were flagged, and take the right action with a clear audit trail. I'll walk you through the full FraudOS workflow: dashboard overview, flagged transaction review, read-only descriptions, compliance reports, model performance, threshold configuration, and the home utilities."
+      }
+    },
+    {
+      "id": "home-live-activity",
+      "description": "Frame the right-rail Live Activity feed on SCR-001-HOME (#commentaryFeed) — the real-time DETECTION and CLEARED event stream that satisfies BR-006.",
+      "action": "scroll",
+      "selector": "#commentaryFeed",
+      "highlight": {
+        "color": "#CF008B",
+        "durationMs": 1300
+      },
+      "speak": {
+        "before": "We are starting on the FraudOS home screen. The two desktop utilities are Notes and Calendar, and the main fraud modules are available from the dock at the bottom.",
+        "after": "On the right, this Live Activity feed shows every important fraud event as it happens. When a transaction is confirmed as fraud or cleared as safe, the event appears here with the time and investigator action."
+      },
+      "pause": {
+        "afterMs": 200
+      }
+    },
+    {
+      "id": "open-dashboard",
+      "description": "Open the AI Fraud Detection Dashboard (SCR-002-DASHBOARD) by clicking #dock-dashboard in the taskbar dock.",
+      "action": "click",
+      "selector": "#dock-dashboard",
+      "highlight": {
+        "durationMs": 1000
+      },
+      "speak": {
+        "before": "I am opening the Dashboard from the dock now.",
+        "after": "The fraud dashboard is open. This is where I first check the overall fraud picture before reviewing individual transactions."
+      }
+    },
+    {
+      "id": "dashboard-banner",
+      "description": "Read the dashboard hero banner (#dashboard-hero-banner) to confirm screen, agent code AG-MS-0426-004, and the three model badges.",
+      "action": "scroll",
+      "selector": "#dashboard-hero-banner",
+      "highlight": {
+        "color": "#5929d0",
+        "durationMs": 1200
+      },
+      "speak": {
+        "before": "At the top, this banner confirms which dashboard we are on and which detection models are active.",
+        "after": "The dashboard is running with Isolation Forest, LSTM, and Azure OpenAI. Together, these models help identify unusual transaction patterns and explain why a transaction was flagged."
+      }
+    },
+    {
+      "id": "kpi-grid",
+      "description": "Frame the four-tile KPI row (#dashboard-kpi-grid) — the headline metrics for today's fraud activity.",
+      "action": "scroll",
+      "selector": "#dashboard-kpi-grid",
+      "highlight": {
+        "color": "#5929d0",
+        "durationMs": 1200
+      },
+      "speak": {
+        "before": "These four KPI cards give me the quick summary for today's fraud activity. I check these before taking action so I know the current volume, flagged count, confirmed fraud count, and false positive rate."
+      }
+    },
+    {
+      "id": "kpi-total",
+      "description": "Read the Total Transactions in DB tile (#dashboard-kpi-total) — live count from Aiven PostgreSQL.",
+      "action": "scroll",
+      "selector": "#dashboard-kpi-total",
+      "highlight": {
+        "durationMs": 1100
+      },
+      "speak": {
+        "before": "This first card shows the total number of transactions currently in the database.",
+        "after": "It helps confirm that the transaction feed is active and that we are looking at the right data volume for today's review."
+      }
+    },
+    {
+      "id": "kpi-flagged",
+      "description": "Read the Total Flagged tile (#dashboard-kpi-flagged) — transactions where the ensemble model scored above 0.80 per UI-02.",
+      "action": "scroll",
+      "selector": "#dashboard-kpi-flagged",
+      "highlight": {
+        "durationMs": 1100
+      },
+      "speak": {
+        "before": "This second card shows how many transactions were flagged by the fraud model.",
+        "after": "These are the transactions that crossed the risk threshold and now need a human review before a final decision is made."
+      }
+    },
+    {
+      "id": "kpi-fraud",
+      "description": "Read the Confirmed Fraud tile (#dashboard-kpi-fraud) — investigator-confirmed cases per BR-004.",
+      "action": "scroll",
+      "selector": "#dashboard-kpi-fraud",
+      "highlight": {
+        "durationMs": 1100
+      },
+      "speak": {
+        "before": "This third card shows confirmed fraud.",
+        "after": "These are transactions that an investigator has already reviewed and marked as fraud. Every confirmation is stored with the score, timestamp, and decision details."
+      }
+    },
+    {
+      "id": "kpi-fprate",
+      "description": "Read the False Positive Rate tile (#dashboard-kpi-fprate) and compare to Target <30% per MET-01.",
+      "action": "scroll",
+      "selector": "#dashboard-kpi-fprate",
+      "highlight": {
+        "color": "#E4902E",
+        "durationMs": 1100
+      },
+      "speak": {
+        "before": "This fourth card shows the false positive rate.",
+        "after": "This number matters because it tells us how often legitimate transactions are being flagged. If it gets too high, we may need to tune the thresholds later."
+      },
+      "pause": {
+        "afterMs": 200
+      }
+    },
+    {
+      "id": "dashboard-timeseries",
+      "description": "Frame the Flagged Transactions Over Time line chart (#dashboard-timeseries-chart) — last 24 hours, two series.",
+      "action": "scroll",
+      "selector": "#dashboard-timeseries-chart",
+      "highlight": {
+        "durationMs": 1200
+      },
+      "speak": {
+        "before": "This chart shows flagged transactions over the last twenty-four hours.",
+        "after": "The main line shows total flagged transactions, and the fraud line shows how many were actually confirmed. The gap between them is where false positives usually appear."
+      }
+    },
+    {
+      "id": "dashboard-riskdist",
+      "description": "Frame the Risk Distribution donut (#dashboard-riskdist-chart) by anomaly score band.",
+      "action": "scroll",
+      "selector": "#dashboard-riskdist-chart",
+      "highlight": {
+        "durationMs": 1200
+      },
+      "speak": {
+        "before": "This donut chart groups flagged transactions by risk level.",
+        "after": "Critical and high-risk transactions are the ones I review first because the model is more confident that something unusual is happening."
+      }
+    },
+    {
+      "id": "dashboard-table",
+      "description": "Frame the flagged transactions table (#dashboard-tx-table) — full row inventory with model scores and status.",
+      "action": "scroll",
+      "selector": "#dashboard-tx-table",
+      "highlight": {
+        "durationMs": 1200
+      },
+      "speak": {
+        "before": "This table gives a read-only preview of the flagged transactions.",
+        "after": "Each row shows the transaction ID, amount, location, model scores, ensemble score, and status. The highest-risk transaction here is the large Hong Kong wire transfer with an ensemble score of zero point nine seven."
+      },
+      "pause": {
+        "afterMs": 200
+      }
+    },
+    {
+      "id": "open-transactions",
+      "description": "Open the Flagged Transaction Review Queue (SCR-003-TX-QUEUE) by clicking #dock-transactions — the BR-004 human-in-the-loop review surface (UI-01).",
+      "action": "click",
+      "selector": "#dock-transactions",
+      "highlight": {
+        "durationMs": 1000
+      },
+      "speak": {
+        "before": "Now I am opening the Transactions queue. This is where I actually review and decide on each flagged transaction.",
+        "after": "The review queue is open. Here I can confirm fraud, clear a false positive, or escalate a transaction for more investigation."
+      }
+    },
+    {
+      "id": "transactions-toolbar",
+      "description": "Frame the queue toolbar (#transactions-toolbar) — search input plus three filter dropdowns for narrowing the work surface.",
+      "action": "scroll",
+      "selector": "#transactions-toolbar",
+      "highlight": {
+        "color": "#5929d0",
+        "durationMs": 1100
+      },
+      "speak": {
+        "before": "This toolbar helps narrow the queue.",
+        "after": "I can search by transaction ID, location, or amount, and I can filter by model, score band, or review status. This makes it easier to focus on the highest-priority cases."
+      }
+    },
+    {
+      "id": "transactions-status-filter",
+      "description": "Open the status filter dropdown (#transactions-status-select) to focus on the unreviewed subset of the queue.",
+      "action": "click",
+      "selector": "#transactions-status-select",
+      "highlight": {
+        "durationMs": 1000
+      },
+      "speak": {
+        "before": "I am opening the status filter so I can focus on transactions that still need review."
+      }
+    },
+    {
+      "id": "transactions-table",
+      "description": "Frame the queue table (#transactions-table) — TX ID, amount, location, merchant, device, model, IF Score, LSTM Score, Ensemble, AI Explanation, Status, Actions.",
+      "action": "scroll",
+      "selector": "#transactions-table",
+      "highlight": {
+        "durationMs": 1200
+      },
+      "speak": {
+        "before": "This is the main transaction review table. Each row includes the transaction details, model scores, AI explanation, current status, and available actions.",
+        "after": "Before I click Fraud, Clear, or Escalate, I read the explanation and compare it with the risk score. The goal is to make a decision that is explainable, not just automatic."
+      },
+      "pause": {
+        "afterMs": 200
+      }
+    },
+    {
+      "id": "transaction-fraud-action",
+      "description": "Confirm fraud on the highest-confidence row by clicking #tx-1-fraud-btn after reading the AI explanation. Records a DETECTION event in the Live Activity feed within one second per AC-06 and increments the Confirmed Fraud KPI tile.",
+      "action": "click",
+      "selector": "#tx-1-fraud-btn",
+      "highlight": {
+        "color": "#DC2626",
+        "durationMs": 1500
+      },
+      "speak": {
+        "before": "I am reviewing the top transaction, TXN-20240424-0064. It is a large wire transfer from Hong Kong, initiated from a new device, with an ensemble score of zero point nine seven. That is a critical-risk pattern, so I am confirming it as fraud.",
+        "during": "High score, new country, new device, and large transfer amount. This is strong fraud evidence.",
+        "after": "Fraud confirmed. The row status has updated, the live feed has logged a detection event, the confirmed fraud count has increased, and the decision is now available in the audit trail."
+      },
+      "pause": {
+        "afterMs": 200
+      }
+    },
+    {
+      "id": "transaction-clear-action",
+      "description": "Clear a borderline row as a false positive by clicking #tx-2-clear-btn after reading the AI explanation. The decision is recorded in the audit log (AC-09) and feeds back into the retraining pipeline as a negative example per BR-004.",
+      "action": "click",
+      "selector": "#tx-2-clear-btn",
+      "highlight": {
+        "color": "#16A34A",
+        "durationMs": 1300
+      },
+      "speak": {
+        "before": "Now I am reviewing TXN-20240424-0091. The model flagged it because the amount is high and the device is unfamiliar, but investigator context says the customer was travelling and approved the purchase.",
+        "after": "I cleared it as a false positive. The row status is now Cleared, the live feed shows a cleared event, and the decision becomes useful feedback for improving the model."
+      }
+    },
+    {
+      "id": "open-description",
+      "description": "Open the read-only Transaction Description page (SCR-007-DESCRIPTION) by clicking #dock-description. Same data as the queue without the Actions column — for stakeholder demos and audit handoff.",
+      "action": "click",
+      "selector": "#dock-description",
+      "highlight": {
+        "durationMs": 1000
+      },
+      "speak": {
+        "before": "Next, I am opening the Description page.",
+        "after": "This page shows the same flagged transaction data, but without action buttons. It is useful for audits, demos, and stakeholder reviews where nobody should accidentally change a transaction status."
+      }
+    },
+    {
+      "id": "description-table",
+      "description": "Frame the read-only #description-table — eleven-column read-only mirror of the review queue with no Actions column.",
+      "action": "scroll",
+      "selector": "#description-table",
+      "highlight": {
+        "durationMs": 1200
+      },
+      "speak": {
+        "before": "This is the read-only transaction table.",
+        "after": "You can inspect the same transaction IDs, scores, locations, explanations, and statuses, but there are no Fraud, Clear, or Escalate buttons here. This keeps the page safe for review-only use."
+      },
+      "pause": {
+        "afterMs": 200
+      }
+    },
+    {
+      "id": "open-reports",
+      "description": "Open Compliance Reports (SCR-004-REPORTS) by clicking #dock-reports — the daily report and historical archive satisfying UI-06 / BR-005 / R-01.",
+      "action": "click",
+      "selector": "#dock-reports",
+      "highlight": {
+        "durationMs": 1000
+      },
+      "speak": {
+        "before": "Now I am opening Compliance Reports.",
+        "after": "The Reports screen is open. This is where daily compliance evidence and historical fraud reports are stored."
+      }
+    },
+    {
+      "id": "reports-today",
+      "description": "Frame today's Daily Compliance Report card (#reports-today-card) with the six headline metrics: processed, flagged, confirmed fraud, FP rate, review completion, LLM helpful rate.",
+      "action": "scroll",
+      "selector": "#reports-today-card",
+      "highlight": {
+        "color": "#5929d0",
+        "durationMs": 1200
+      },
+      "speak": {
+        "before": "This card is today's compliance report.",
+        "after": "It summarizes processed transactions, flagged cases, confirmed fraud, false positive rate, review completion, and how helpful the AI explanations were during investigation."
+      }
+    },
+    {
+      "id": "reports-download-today",
+      "description": "Click #reports-today-download-btn to download today's compliance PDF per BR-005 / R-01. Captured as evidence per AC-09.",
+      "action": "click",
+      "selector": "#reports-today-download-btn",
+      "highlight": {
+        "durationMs": 1000
+      },
+      "speak": {
+        "before": "I am downloading today's compliance report.",
+        "after": "The report PDF has been downloaded and can be used as evidence for compliance review."
+      }
+    },
+    {
+      "id": "reports-archive",
+      "description": "Frame the Report Archive table (#reports-archive-table) — every prior daily report with date, transactions, flagged, fraud, FP rate, F1 score, and download.",
+      "action": "scroll",
+      "selector": "#reports-archive-table",
+      "highlight": {
+        "durationMs": 1200
+      },
+      "speak": {
+        "before": "This archive stores previous daily reports.",
+        "after": "Each row has the report date, transaction volume, flagged count, fraud count, false positive rate, F1 score, and a download option. If compliance asks for a past report, I can retrieve it from here."
+      },
+      "pause": {
+        "afterMs": 200
+      }
+    },
+    {
+      "id": "open-model",
+      "description": "Open the Model Performance Panel (SCR-005-MODEL-PERF) by clicking #dock-model — three model cards, weekly FP trend, and the BR-006-compliant audit log per UI-03 / R-02.",
+      "action": "click",
+      "selector": "#dock-model",
+      "highlight": {
+        "durationMs": 1000
+      },
+      "speak": {
+        "before": "Next, I am opening Model Performance.",
+        "after": "This screen shows how the fraud models are performing and gives us the audit log of investigator decisions."
+      }
+    },
+    {
+      "id": "model-cards",
+      "description": "Frame the three model cards (#model-perf-grid) — Isolation Forest, LSTM Network, and Ensemble Model — each showing Precision, Recall, F1 Score, and FP Rate.",
+      "action": "scroll",
+      "selector": "#model-perf-grid",
+      "highlight": {
+        "color": "#5929d0",
+        "durationMs": 1200
+      },
+      "speak": {
+        "before": "These three cards show the individual model performance.",
+        "after": "Isolation Forest focuses on unusual single-point anomalies, LSTM looks at transaction sequence patterns, and the Ensemble combines both signals. I use these numbers to understand whether the detection system is accurate or over-flagging."
+      }
+    },
+    {
+      "id": "model-card-ensemble",
+      "description": "Spotlight the Ensemble Model card (#model-perf-card-ensemble) — the production decision model, leading on F1 and FP rate.",
+      "action": "scroll",
+      "selector": "#model-perf-card-ensemble",
+      "highlight": {
+        "color": "#16A34A",
+        "durationMs": 1300
+      },
+      "speak": {
+        "before": "The Ensemble Model is the main production decision model.",
+        "after": "It has the strongest overall balance: high precision, high recall, a strong F1 score, and the lowest false positive rate among the three models. That is why its score drives the final fraud flag."
+      }
+    },
+    {
+      "id": "model-fp-trend",
+      "description": "Frame the False Positive Rate Trend Weekly chart (#model-fp-chart) — eight weeks of ensemble FP rate against the 30% target line per MET-01.",
+      "action": "scroll",
+      "selector": "#model-fp-chart",
+      "highlight": {
+        "durationMs": 1200
+      },
+      "speak": {
+        "before": "This chart tracks the false positive rate over the last eight weeks.",
+        "after": "The trend is moving in the right direction. False positives started high, then dropped toward the target line as thresholds were tuned."
+      }
+    },
+    {
+      "id": "model-audit-log",
+      "description": "Frame the Audit Log table (#model-audit-table) — append-only record of every investigator decision per AC-09 / BR-006.",
+      "action": "scroll",
+      "selector": "#model-audit-table",
+      "highlight": {
+        "color": "#CF008B",
+        "durationMs": 1300
+      },
+      "speak": {
+        "before": "This is the investigator audit log.",
+        "after": "Every decision is recorded here with transaction reference, action, model score, timestamp, and notes. The fraud confirmation and clearance actions I performed earlier are now visible in this log."
+      },
+      "pause": {
+        "afterMs": 200
+      }
+    },
+    {
+      "id": "open-thresholds",
+      "description": "Open the Threshold Configuration Panel (SCR-006-THRESHOLDS) by clicking #dock-threshold — restricted submission interface satisfying UI-04 / BR-001 / BR-002.",
+      "action": "click",
+      "selector": "#dock-threshold",
+      "highlight": {
+        "durationMs": 1000
+      },
+      "speak": {
+        "before": "Now I am opening Threshold Configuration.",
+        "after": "This is where threshold changes are reviewed before approval. The goal is to reduce false positives without damaging fraud recall."
+      }
+    },
+    {
+      "id": "threshold-admin-badge",
+      "description": "Validate the Admin Role Active badge (#threshold-admin-badge) before any approval click — required by UI-04 access restrictions.",
+      "action": "scroll",
+      "selector": "#threshold-admin-badge",
+      "highlight": {
+        "color": "#E4902E",
+        "durationMs": 1200
+      },
+      "speak": {
+        "before": "Before approving anything, I check the Admin Role Active badge.",
+        "after": "The admin role is active, so approval actions are allowed. If this badge were missing, I would stop here and not attempt any threshold approval."
+      }
+    },
+    {
+      "id": "threshold-table",
+      "description": "Frame the threshold table (#threshold-table) — five categories with current, proposed, FP impact, recall impact, status, and action.",
+      "action": "scroll",
+      "selector": "#threshold-table",
+      "highlight": {
+        "durationMs": 1200
+      },
+      "speak": {
+        "before": "This table lists the threshold proposals by category.",
+        "after": "For each proposal, I compare the current threshold, proposed threshold, expected false positive impact, recall impact, status, and available action. I never approve a change that pushes recall below the required floor."
+      }
+    },
+    {
+      "id": "threshold-approve-action",
+      "description": "Approve a pending threshold whose recall impact stays within tolerance, by clicking #threshold-approve-btn-1 — submits the change to the BR-002 weekly cycle.",
+      "action": "click",
+      "selector": "#threshold-approve-btn-1",
+      "highlight": {
+        "color": "#16A34A",
+        "durationMs": 1500
+      },
+      "speak": {
+        "before": "I am reviewing the Crypto Exchange proposal. The threshold moves from zero point seven zero to zero point seven five. It reduces false positives by ten percent, while recall only drops by zero point eight percent.",
+        "during": "False positives improve, and recall stays within the safe range.",
+        "after": "Approved. The proposal status has changed from Pending to Approved, and the threshold change is now submitted for the weekly approval cycle."
+      },
+      "pause": {
+        "afterMs": 200
+      }
+    },
+    {
+      "id": "threshold-blocked-row",
+      "description": "Spotlight an auto-blocked row (#threshold-row-5) — Wallet Transfer Domestic — whose recall impact breaches the 95% floor (Constraint 3). Validate-only, do not click.",
+      "action": "scroll",
+      "selector": "#threshold-row-5",
+      "highlight": {
+        "color": "#DC2626",
+        "durationMs": 1500
+      },
+      "speak": {
+        "before": "This last row is blocked automatically.",
+        "after": "The proposed Wallet Transfer Domestic change would reduce recall too much. Since it would fall below the allowed recall floor, the system removes the approval option. I do not override that block."
+      },
+      "pause": {
+        "afterMs": 200
+      }
+    },
+    {
+      "id": "threshold-rules-note",
+      "description": "Read the rules footnote (#threshold-rules-note) at the bottom of the panel — every change needs Head of Fraud & Risk sign-off; sub-95% recall proposals are auto-blocked; all changes stored in Aiven PostgreSQL.",
+      "action": "scroll",
+      "selector": "#threshold-rules-note",
+      "highlight": {
+        "durationMs": 1100
+      },
+      "speak": {
+        "before": "This note summarizes the threshold approval rules.",
+        "after": "Every threshold change needs sign-off. Any proposal that would reduce recall below the allowed limit is blocked. Approved, pending, and blocked changes are all stored for audit."
+      }
+    },
+    {
+      "id": "return-home",
+      "description": "Return to the home desktop by clicking #dock-desktop — completes the canonical SCR-001 → SCR-002 → SCR-003 → SCR-004 → SCR-005 → SCR-006 happy flow and surfaces the Notes / Calendar utilities.",
+      "action": "click",
+      "selector": "#dock-desktop",
+      "highlight": {
+        "durationMs": 1000
+      },
+      "speak": {
+        "before": "I am returning to the home desktop.",
+        "after": "We are back at the home screen. Notes and Calendar are available here for investigation notes and follow-up scheduling."
+      }
+    },
+    {
+      "id": "desktop-notes-icon",
+      "description": "Open the Notes modal (#notes-modal) with a single click on #desktop-notes-icon — investigation notes persisted to localStorage key fraudos-notes.",
+      "action": "click",
+      "selector": "#desktop-notes-icon",
+      "highlight": {
+        "durationMs": 1000
+      },
+      "speak": {
+        "before": "I am opening Notes.",
+        "after": "The Notes modal is open. Investigators can use this to capture investigation context or decision rationale during review."
+      }
+    },
+    {
+      "id": "notes-close",
+      "description": "Close the Notes modal by clicking #notes-close-btn.",
+      "action": "click",
+      "selector": "#notes-close-btn",
+      "speak": {
+        "before": "Closing Notes."
+      }
+    },
+    {
+      "id": "desktop-calendar-icon",
+      "description": "Open the Calendar modal (#calendar-modal) with a single click on #desktop-calendar-icon — case follow-up scheduling persisted to localStorage key fraudos-cal-events.",
+      "action": "click",
+      "selector": "#desktop-calendar-icon",
+      "highlight": {
+        "durationMs": 1000
+      },
+      "speak": {
+        "before": "Now I am opening Calendar.",
+        "after": "The Calendar is open. This can be used to schedule case follow-ups, review reminders, or escalation dates."
+      }
+    },
+    {
+      "id": "calendar-close",
+      "description": "Close the Calendar modal by clicking #calendar-close-btn.",
+      "action": "click",
+      "selector": "#calendar-close-btn",
+      "speak": {
+        "before": "Closing Calendar."
+      }
+    },
+    {
+      "id": "outro",
+      "description": "Closing summary with no UI action — recap of the seven screens covered and the recommended next-action.",
+      "action": "none",
+      "speak": {
+        "before": "That completes the FraudOS walkthrough. We reviewed the live activity feed, dashboard metrics, transaction queue, read-only description page, compliance reports, model performance, threshold configuration, Notes, and Calendar. The most important takeaway is that every fraud decision is explainable, reviewable, and recorded. What would you like to inspect next?"
+      }
+    }
+  ]
+}

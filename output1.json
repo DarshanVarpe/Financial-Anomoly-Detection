@@ -1,0 +1,502 @@
+{
+  "title": "Rahul — Fraud Investigation Agent walkthrough",
+  "description": "End-to-end tour of the FraudOS — AEGIS.AI fraud detection platform. Walks Rahul's seven screens: home desktop, AI fraud detection dashboard, flagged transaction review queue, transaction description (read-only), compliance reports, model performance, and threshold configuration.",
+  "meta": {
+    "dashboardVersion": "1.0",
+    "author": "Rahul",
+    "targetAudience": "Fraud investigators, compliance reviewers, model risk leads",
+    "pacingNote": "Pauses kept short. Real-time fraud data refreshes continuously, so each screen has visible activity in the Live Activity feed and the dashboard chart."
+  },
+  "steps": [
+    {
+      "id": "intro",
+      "description": "Opening line — no UI action, set the stage.",
+      "action": "none",
+      "speak": {
+        "before": "Hi, I'm Rahul. Let me walk you through what's happening across our fraud detection platform today."
+      }
+    },
+
+    {
+      "id": "home-live-activity",
+      "description": "Frame the Live Activity feed on the home screen.",
+      "action": "scroll",
+      "selector": "#commentaryFeed",
+      "highlight": { "color": "#CF008B", "durationMs": 1300 },
+      "speak": {
+        "before": "We start on the FraudOS home. On the right is the Live Activity feed.",
+        "after": "Every detection and clearance lands here in real time."
+      },
+      "pause": { "afterMs": 200 }
+    },
+
+    {
+      "id": "open-dashboard",
+      "description": "Open the AI Fraud Detection Dashboard from the taskbar dock.",
+      "action": "click",
+      "selector": "#dock-dashboard",
+      "highlight": { "durationMs": 1000 },
+      "speak": {
+        "before": "Let's open the Dashboard.",
+        "after": "This is the real-time KPI view for today."
+      }
+    },
+
+    {
+      "id": "dashboard-banner",
+      "description": "Frame the dashboard hero banner with agent code and model badges.",
+      "action": "scroll",
+      "selector": "#dashboard-hero-banner",
+      "highlight": { "color": "#5929d0", "durationMs": 1200 },
+      "speak": {
+        "before": "Banner up top with the agent code and active model badges.",
+        "after": "Isolation Forest, LSTM, and Azure OpenAI are all online."
+      }
+    },
+
+    {
+      "id": "kpi-grid",
+      "description": "Frame the four KPI tile row.",
+      "action": "scroll",
+      "selector": "#dashboard-kpi-grid",
+      "highlight": { "color": "#5929d0", "durationMs": 1200 },
+      "speak": {
+        "before": "Four KPI tiles — each one summarises a different angle on today's fraud activity."
+      }
+    },
+
+    {
+      "id": "kpi-total",
+      "description": "Total transactions in DB tile.",
+      "action": "scroll",
+      "selector": "#dashboard-kpi-total",
+      "highlight": { "durationMs": 1100 },
+      "speak": {
+        "before": "First, total transactions in the database.",
+        "after": "Live count from Aiven PostgreSQL."
+      }
+    },
+
+    {
+      "id": "kpi-flagged",
+      "description": "Total flagged tile.",
+      "action": "scroll",
+      "selector": "#dashboard-kpi-flagged",
+      "highlight": { "durationMs": 1100 },
+      "speak": {
+        "before": "Flagged transactions.",
+        "after": "Anything the ensemble model scored above 0.80."
+      }
+    },
+
+    {
+      "id": "kpi-fraud",
+      "description": "Confirmed fraud tile.",
+      "action": "scroll",
+      "selector": "#dashboard-kpi-fraud",
+      "highlight": { "durationMs": 1100 },
+      "speak": {
+        "before": "Confirmed fraud.",
+        "after": "Investigator-confirmed cases for today."
+      }
+    },
+
+    {
+      "id": "kpi-fprate",
+      "description": "False positive rate tile with target.",
+      "action": "scroll",
+      "selector": "#dashboard-kpi-fprate",
+      "highlight": { "color": "#E4902E", "durationMs": 1100 },
+      "speak": {
+        "before": "False positive rate.",
+        "after": "Target is below thirty percent."
+      },
+      "pause": { "afterMs": 200 }
+    },
+
+    {
+      "id": "dashboard-timeseries",
+      "description": "Flagged Transactions Over Time chart.",
+      "action": "scroll",
+      "selector": "#dashboard-timeseries-chart",
+      "highlight": { "durationMs": 1200 },
+      "speak": {
+        "before": "Flagged transactions over the last twenty-four hours.",
+        "after": "Purple is flagged, red is confirmed fraud."
+      }
+    },
+
+    {
+      "id": "dashboard-riskdist",
+      "description": "Risk Distribution donut by anomaly score band.",
+      "action": "scroll",
+      "selector": "#dashboard-riskdist-chart",
+      "highlight": { "durationMs": 1200 },
+      "speak": {
+        "before": "Risk Distribution donut.",
+        "after": "Critical, High, Medium, and Low bands by anomaly score."
+      }
+    },
+
+    {
+      "id": "dashboard-table",
+      "description": "Flagged transactions table on the dashboard.",
+      "action": "scroll",
+      "selector": "#dashboard-tx-table",
+      "highlight": { "durationMs": 1200 },
+      "speak": {
+        "before": "Below the charts, every flagged transaction with model scores and current status.",
+        "after": "Each row carries the full context the investigator needs."
+      },
+      "pause": { "afterMs": 200 }
+    },
+
+    {
+      "id": "open-transactions",
+      "description": "Switch to the Flagged Transaction Review Queue.",
+      "action": "click",
+      "selector": "#dock-transactions",
+      "highlight": { "durationMs": 1000 },
+      "speak": {
+        "before": "Let's open the review queue.",
+        "after": "This is where I confirm or clear each flagged transaction."
+      }
+    },
+
+    {
+      "id": "transactions-toolbar",
+      "description": "Filter toolbar at the top of the queue.",
+      "action": "scroll",
+      "selector": "#transactions-toolbar",
+      "highlight": { "color": "#5929d0", "durationMs": 1100 },
+      "speak": {
+        "before": "Filter row up top — search, model, score band, and status.",
+        "after": "I narrow the queue before working through it."
+      }
+    },
+
+    {
+      "id": "transactions-status-filter",
+      "description": "Status dropdown to focus on unreviewed transactions.",
+      "action": "click",
+      "selector": "#transactions-status-select",
+      "highlight": { "durationMs": 1000 },
+      "speak": {
+        "before": "Filtering by status to focus on what's still unreviewed."
+      }
+    },
+
+    {
+      "id": "transactions-table",
+      "description": "Frame the queue table.",
+      "action": "scroll",
+      "selector": "#transactions-table",
+      "highlight": { "durationMs": 1200 },
+      "speak": {
+        "before": "Each row has the AI explanation and per-model scores.",
+        "after": "Action buttons on the right — Fraud, Clear, Escalate."
+      },
+      "pause": { "afterMs": 200 }
+    },
+
+    {
+      "id": "transaction-fraud-action",
+      "description": "Confirm fraud on the highest-confidence row.",
+      "action": "click",
+      "selector": "#tx-1-fraud-btn",
+      "highlight": { "color": "#DC2626", "durationMs": 1500 },
+      "speak": {
+        "before": "Top row — critical wire transfer from a new device.",
+        "during": "Ensemble score above 0.95, AI explanation flags new device and new country.",
+        "after": "Confirming as fraud. Live Activity logs the decision instantly."
+      },
+      "pause": { "afterMs": 200 }
+    },
+
+    {
+      "id": "transaction-clear-action",
+      "description": "Clear a borderline row as a false positive.",
+      "action": "click",
+      "selector": "#tx-2-clear-btn",
+      "highlight": { "color": "#16A34A", "durationMs": 1300 },
+      "speak": {
+        "before": "Next row — investigator context says this one is legitimate.",
+        "after": "Clearing as a false positive. Feeds back into the retraining loop."
+      }
+    },
+
+    {
+      "id": "open-description",
+      "description": "Switch to the read-only Transaction Description view.",
+      "action": "click",
+      "selector": "#dock-description",
+      "highlight": { "durationMs": 1000 },
+      "speak": {
+        "before": "Description page.",
+        "after": "Same data as the queue but read-only — for stakeholder review."
+      }
+    },
+
+    {
+      "id": "description-table",
+      "description": "Frame the description table (no Actions column).",
+      "action": "scroll",
+      "selector": "#description-table",
+      "highlight": { "durationMs": 1200 },
+      "speak": {
+        "before": "All flagged transactions in inspection mode.",
+        "after": "No Fraud, Clear, or Escalate buttons — by design, so demos can't accidentally action a row."
+      },
+      "pause": { "afterMs": 200 }
+    },
+
+    {
+      "id": "open-reports",
+      "description": "Switch to the Compliance Reports screen.",
+      "action": "click",
+      "selector": "#dock-reports",
+      "highlight": { "durationMs": 1000 },
+      "speak": {
+        "before": "Compliance Reports.",
+        "after": "Today's report up top, archive below."
+      }
+    },
+
+    {
+      "id": "reports-today",
+      "description": "Today's compliance metrics card.",
+      "action": "scroll",
+      "selector": "#reports-today-card",
+      "highlight": { "color": "#5929d0", "durationMs": 1200 },
+      "speak": {
+        "before": "Six metrics for today — processed, flagged, fraud, FP rate, review completion, and LLM helpful rate.",
+        "after": "Auto-generated and delivered to compliance, head of fraud, and the CCO."
+      }
+    },
+
+    {
+      "id": "reports-download-today",
+      "description": "Download today's compliance PDF.",
+      "action": "click",
+      "selector": "#reports-today-download-btn",
+      "highlight": { "durationMs": 1000 },
+      "speak": {
+        "before": "Downloading today's compliance report.",
+        "after": "Saved as evidence."
+      }
+    },
+
+    {
+      "id": "reports-archive",
+      "description": "Frame the report archive table.",
+      "action": "scroll",
+      "selector": "#reports-archive-table",
+      "highlight": { "durationMs": 1200 },
+      "speak": {
+        "before": "Below, the historical archive — every prior daily report.",
+        "after": "Each row has a download button for that date."
+      },
+      "pause": { "afterMs": 200 }
+    },
+
+    {
+      "id": "open-model",
+      "description": "Switch to the Model Performance Panel.",
+      "action": "click",
+      "selector": "#dock-model",
+      "highlight": { "durationMs": 1000 },
+      "speak": {
+        "before": "Model performance.",
+        "after": "Three model cards, FP trend chart, and the audit log."
+      }
+    },
+
+    {
+      "id": "model-cards",
+      "description": "Frame the three model performance cards.",
+      "action": "scroll",
+      "selector": "#model-perf-grid",
+      "highlight": { "color": "#5929d0", "durationMs": 1200 },
+      "speak": {
+        "before": "Three models — Isolation Forest, LSTM, and the Ensemble.",
+        "after": "Precision, Recall, F1, and FP Rate for each."
+      }
+    },
+
+    {
+      "id": "model-card-ensemble",
+      "description": "Spotlight the Ensemble card — the leading model.",
+      "action": "scroll",
+      "selector": "#model-perf-card-ensemble",
+      "highlight": { "color": "#16A34A", "durationMs": 1300 },
+      "speak": {
+        "before": "Ensemble is the production model.",
+        "after": "Highest F1 score and lowest FP rate of the three."
+      }
+    },
+
+    {
+      "id": "model-fp-trend",
+      "description": "Weekly FP rate trend chart with target line.",
+      "action": "scroll",
+      "selector": "#model-fp-chart",
+      "highlight": { "durationMs": 1200 },
+      "speak": {
+        "before": "Eight-week false positive trend.",
+        "after": "Descending toward the thirty percent target."
+      }
+    },
+
+    {
+      "id": "model-audit-log",
+      "description": "Frame the investigator audit log table.",
+      "action": "scroll",
+      "selector": "#model-audit-table",
+      "highlight": { "color": "#CF008B", "durationMs": 1300 },
+      "speak": {
+        "before": "Below, the full audit log of investigator decisions.",
+        "after": "Every action with TX reference, score, and timestamp — append-only and BR-006 compliant."
+      },
+      "pause": { "afterMs": 200 }
+    },
+
+    {
+      "id": "open-thresholds",
+      "description": "Switch to the Threshold Configuration Panel.",
+      "action": "click",
+      "selector": "#dock-threshold",
+      "highlight": { "durationMs": 1000 },
+      "speak": {
+        "before": "Last screen — Threshold Configuration.",
+        "after": "Where I approve proposed model threshold changes."
+      }
+    },
+
+    {
+      "id": "threshold-admin-badge",
+      "description": "Validate Admin Role Active badge before approving.",
+      "action": "scroll",
+      "selector": "#threshold-admin-badge",
+      "highlight": { "color": "#E4902E", "durationMs": 1200 },
+      "speak": {
+        "before": "Admin Role Active — required before any approval.",
+        "after": "Without this badge, every Approve button is disabled."
+      }
+    },
+
+    {
+      "id": "threshold-table",
+      "description": "Frame the threshold configuration table.",
+      "action": "scroll",
+      "selector": "#threshold-table",
+      "highlight": { "durationMs": 1200 },
+      "speak": {
+        "before": "Five categories — current and proposed values, with FP and recall impact for each."
+      }
+    },
+
+    {
+      "id": "threshold-approve-action",
+      "description": "Approve a pending threshold change within tolerance.",
+      "action": "click",
+      "selector": "#threshold-approve-btn-1",
+      "highlight": { "color": "#16A34A", "durationMs": 1500 },
+      "speak": {
+        "before": "First pending row — recall impact within tolerance.",
+        "during": "FP impact down ten percent, recall impact under one percent.",
+        "after": "Approved. Submitted to the BR-002 weekly cycle."
+      },
+      "pause": { "afterMs": 200 }
+    },
+
+    {
+      "id": "threshold-blocked-row",
+      "description": "Spotlight an auto-blocked row that breaches the recall floor.",
+      "action": "scroll",
+      "selector": "#threshold-row-5",
+      "highlight": { "color": "#DC2626", "durationMs": 1500 },
+      "speak": {
+        "before": "This row is auto-blocked by the system.",
+        "after": "Recall impact below the ninety-five percent floor — Constraint 3 prevents approval. I do not override."
+      },
+      "pause": { "afterMs": 200 }
+    },
+
+    {
+      "id": "threshold-rules-note",
+      "description": "Read the rules footnote at the bottom of the panel.",
+      "action": "scroll",
+      "selector": "#threshold-rules-note",
+      "highlight": { "durationMs": 1100 },
+      "speak": {
+        "before": "Rules footnote — every change needs Head of Fraud and Risk sign-off.",
+        "after": "All changes are stored in Aiven PostgreSQL."
+      }
+    },
+
+    {
+      "id": "return-home",
+      "description": "Back to the home desktop to close the tour.",
+      "action": "click",
+      "selector": "#dock-desktop",
+      "highlight": { "durationMs": 1000 },
+      "speak": {
+        "before": "Coming back to the home desktop.",
+        "after": "Notes and Calendar utilities live here for investigator use."
+      }
+    },
+
+    {
+      "id": "desktop-notes-icon",
+      "description": "Open Notes modal as a utility example.",
+      "action": "click",
+      "selector": "#desktop-notes-icon",
+      "highlight": { "durationMs": 1000 },
+      "speak": {
+        "before": "Single-click opens the Notes modal.",
+        "after": "For ad-hoc investigation notes that persist across sessions."
+      }
+    },
+
+    {
+      "id": "notes-close",
+      "description": "Close the Notes modal.",
+      "action": "click",
+      "selector": "#notes-close-btn",
+      "speak": {
+        "before": "Closing the modal."
+      }
+    },
+
+    {
+      "id": "desktop-calendar-icon",
+      "description": "Open Calendar modal as the second utility.",
+      "action": "click",
+      "selector": "#desktop-calendar-icon",
+      "highlight": { "durationMs": 1000 },
+      "speak": {
+        "before": "And the Calendar — for case follow-ups and scheduled reviews.",
+        "after": "Same single-click pattern."
+      }
+    },
+
+    {
+      "id": "calendar-close",
+      "description": "Close the Calendar modal.",
+      "action": "click",
+      "selector": "#calendar-close-btn",
+      "speak": {
+        "before": "Closing the modal."
+      }
+    },
+
+    {
+      "id": "outro",
+      "description": "Closing line — no UI action.",
+      "action": "none",
+      "speak": {
+        "before": "That's the full picture — dashboard, queue, description, reports, model performance, thresholds, and the desktop utilities. Anything you'd like me to dig into?"
+      }
+    }
+  ]
+}

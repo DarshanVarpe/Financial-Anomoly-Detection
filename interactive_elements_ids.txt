@@ -1,0 +1,322 @@
+================================================================================
+FraudOS v2 — Complete List of Interactive Elements with IDs
+================================================================================
+Generated from frontend/src JSX source code.
+"Interactive" = anything clickable, typeable, or selectable (buttons, inputs,
+selects, clickable icons, table rows with onClick handlers).
+
+Templated IDs use {placeholder} notation; an example value is shown alongside.
+
+================================================================================
+[ 1 ] PERSISTENT CHROME (visible on every screen)
+================================================================================
+
+--- 1.1 Menubar (top bar) ---------------------------------------------------
+File: frontend/src/components/Menubar.jsx
+
+  #themeToggleBtn               button   Toggle dark/light theme
+  #menubar-notification-btn     button   Notification bell (top right)
+
+--- 1.2 Dock / Taskbar (bottom) ---------------------------------------------
+File: frontend/src/components/Dock.jsx
+
+  #dock-desktop                 clickable icon   Return to home desktop
+  #dock-dashboard               clickable icon   Open AI Fraud Detection Dashboard
+  #dock-transactions            clickable icon   Open Flagged Transaction Review Queue
+  #dock-reports                 clickable icon   Open Compliance Reports
+  #dock-model                   clickable icon   Open Model Performance Panel
+  #dock-threshold               clickable icon   Open Threshold Configuration Panel
+  #dock-description             clickable icon   Open Transaction Description (read-only)
+
+--- 1.3 Window Chrome (per page; uses winId) -------------------------------
+File: frontend/src/components/WinChrome.jsx
+
+  #{winId}-close-btn            clickable icon   Close window / return to home
+                                Renders as:
+                                  #dashboard-close-btn
+                                  #transactions-close-btn
+                                  #description-close-btn
+                                  #reports-close-btn
+                                  #model-close-btn
+                                  #threshold-close-btn
+
+  #{winId}-minimise-btn         clickable icon   Visual only, no action
+  #{winId}-maximise-btn         clickable icon   Visual only, no action
+
+================================================================================
+[ 2 ] HOME / DESKTOP PAGE (SCR-001-HOME)
+================================================================================
+File: frontend/src/pages/DesktopPage.jsx
+
+  #desktop-notes-icon           clickable icon   Single-click → opens Notes modal
+  #desktop-calendar-icon        clickable icon   Single-click → opens Calendar modal
+
+================================================================================
+[ 3 ] DASHBOARD PAGE (SCR-002-DASHBOARD, winId="dashboard")
+================================================================================
+File: frontend/src/pages/DashboardPage.jsx
+
+  #dashboard-search-input       input            Search by ID, location, amount
+  #dashboard-status-select      select           Filter rows by status
+  #dashboard-pdf-btn            button           Export flagged transactions as PDF
+
+  Per transaction row (TransactionRow component, see section 9):
+    #tx-row-{tx.id}             clickable row    e.g. #tx-row-1
+    #tx-{tx.id}-fraud-btn       button           e.g. #tx-1-fraud-btn
+    #tx-{tx.id}-clear-btn       button           e.g. #tx-1-clear-btn
+    #tx-{tx.id}-escalate-btn    button           e.g. #tx-1-escalate-btn
+
+================================================================================
+[ 4 ] TRANSACTIONS PAGE (SCR-003-TX-QUEUE, winId="transactions")
+================================================================================
+File: frontend/src/pages/TransactionsPage.jsx
+
+  #transactions-search-input    input            Search bar
+  #transactions-model-select    select           Filter by model (IF / LSTM / Ensemble)
+  #transactions-score-select    select           Filter by score band (High/Medium/Low)
+  #transactions-status-select   select           Filter by review status
+
+  Per row (TransactionRow component, see section 9):
+    #tx-row-{tx.id}             clickable row    e.g. #tx-row-2
+    #tx-{tx.id}-fraud-btn       button           e.g. #tx-2-fraud-btn
+    #tx-{tx.id}-clear-btn       button           e.g. #tx-2-clear-btn
+    #tx-{tx.id}-escalate-btn    button           e.g. #tx-2-escalate-btn
+
+================================================================================
+[ 5 ] DESCRIPTION PAGE (SCR-007-DESCRIPTION, winId="description")
+================================================================================
+File: frontend/src/pages/DescriptionPage.jsx
+NOTE: Read-only. NO Fraud / Clear / Escalate buttons rendered (showActions=false).
+
+  #description-search-input     input            Search bar
+  #description-model-select     select           Filter by model
+  #description-score-select     select           Filter by score band
+  #description-status-select    select           Filter by status
+
+  Per row:
+    #tx-row-{tx.id}             clickable row    Read-only inspection only
+
+================================================================================
+[ 6 ] REPORTS PAGE (SCR-004-REPORTS, winId="reports")
+================================================================================
+File: frontend/src/pages/ReportsPage.jsx
+
+  #reports-today-download-btn   button           Download today's compliance PDF
+
+  Per archive row (one per past date):
+    #reports-archive-row-{date}            clickable row
+    #reports-archive-download-btn-{date}   button   Download that date's PDF
+
+  Examples (date format YYYY-MM-DD):
+    #reports-archive-row-2026-04-29
+    #reports-archive-download-btn-2026-04-29
+    #reports-archive-row-2026-04-28
+    #reports-archive-download-btn-2026-04-28
+
+================================================================================
+[ 7 ] MODEL PERFORMANCE PAGE (SCR-005-MODEL-PERF, winId="model")
+================================================================================
+File: frontend/src/pages/ModelPage.jsx
+NOTE: Page is read-only (no buttons or inputs). The model cards and
+      audit log are visual containers, not interactive controls.
+
+  No interactive elements on this page.
+
+  Visual containers (for reference):
+    #model-perf-card-isolation_forest
+    #model-perf-card-lstm
+    #model-perf-card-ensemble
+    #model-fp-chart
+    #model-audit-table
+    #model-audit-row-{a.id}
+
+================================================================================
+[ 8 ] THRESHOLD PAGE (SCR-006-THRESHOLDS, winId="threshold")
+================================================================================
+File: frontend/src/pages/ThresholdPage.jsx
+
+  Per threshold row (one per category):
+    #threshold-input-{t.id}            input number   Edit proposed threshold (0.50–0.99)
+    #threshold-approve-btn-{t.id}      button         Approve pending threshold
+    #threshold-revise-btn-{t.id}       button         Focus the input for revision
+
+  Examples (t.id is the row's database primary key, integer):
+    #threshold-input-1
+    #threshold-approve-btn-1
+    #threshold-revise-btn-1
+    #threshold-input-2
+    #threshold-approve-btn-2
+    #threshold-revise-btn-2
+    ... etc for each of the 5 threshold categories
+
+================================================================================
+[ 9 ] SHARED — TRANSACTION ROW (used by Dashboard, Transactions, Description)
+================================================================================
+File: frontend/src/components/TransactionRow.jsx
+
+  #tx-row-{tx.id}                 clickable row    Each flagged transaction
+  #tx-{tx.id}-fraud-btn           button           Confirm as fraud (BR-004)
+  #tx-{tx.id}-clear-btn           button           Clear as false positive (BR-004)
+  #tx-{tx.id}-escalate-btn        button           Escalate to supervisor
+
+  Action buttons only render when showActions=true (so they exist on
+  Dashboard and Transactions, but NOT on Description page).
+
+  Examples:
+    #tx-row-1, #tx-1-fraud-btn, #tx-1-clear-btn, #tx-1-escalate-btn
+    #tx-row-2, #tx-2-fraud-btn, #tx-2-clear-btn, #tx-2-escalate-btn
+    #tx-row-3, #tx-3-fraud-btn, #tx-3-clear-btn, #tx-3-escalate-btn
+
+================================================================================
+[ 10 ] NOTES MODAL (opens from #desktop-notes-icon)
+================================================================================
+File: frontend/src/components/modals/NotesModal.jsx
+
+  #notes-close-btn              button           Close modal (✕)
+  #notes-textarea               textarea         Type investigation note
+  #notes-save-btn               button           Save the note
+  #notes-clear-btn              button           Clear the textarea
+
+  Per saved note:
+    #note-delete-btn-{i}        button           Delete note at index i
+
+  Examples:
+    #note-delete-btn-0
+    #note-delete-btn-1
+    #note-delete-btn-2
+
+================================================================================
+[ 11 ] CALENDAR MODAL (opens from #desktop-calendar-icon)
+================================================================================
+File: frontend/src/components/modals/CalendarModal.jsx
+
+  #calendar-close-btn           button           Close modal (✕)
+  #calendar-prev-btn            button           Previous month (‹)
+  #calendar-next-btn            button           Next month (›)
+  #calendar-event-input         input            Type event description
+  #calendar-add-btn             button           Add event for selected date
+
+  Per day in current month:
+    #calendar-day-{YYYY-MM-DD}  clickable cell   Select that day
+
+  Examples:
+    #calendar-day-2026-04-29
+    #calendar-day-2026-04-30
+    #calendar-day-2026-05-01
+
+================================================================================
+[ 12 ] CALCULATOR MODAL
+================================================================================
+File: frontend/src/components/modals/CalculatorModal.jsx
+
+  #calc-close-btn               button           Close modal (✕)
+  #calc-ac-btn                  button           Clear all (AC)
+  #calc-sign-btn                button           Toggle sign (+/-)
+  #calc-pct-btn                 button           Percent (%)
+  #calc-div-btn                 button           Divide (÷)
+  #calc-mul-btn                 button           Multiply (×)
+  #calc-sub-btn                 button           Subtract (−)
+  #calc-add-btn                 button           Add (+)
+  #calc-eq-btn                  button           Equals (=)
+  #calc-dot-btn                 button           Decimal point (.)
+
+  Number keys:
+    #calc-num-0-btn   #calc-num-1-btn   #calc-num-2-btn
+    #calc-num-3-btn   #calc-num-4-btn   #calc-num-5-btn
+    #calc-num-6-btn   #calc-num-7-btn   #calc-num-8-btn
+    #calc-num-9-btn
+
+================================================================================
+[ 13 ] LIVE ACTIVITY FEED (right rail, persistent)
+================================================================================
+File: frontend/src/components/ActivityFeed.jsx
+NOTE: The feed is read-only. Each event renders with an id but is
+      not clickable in v2.
+
+  #activity-item-{a.id}         div              One per event (read-only)
+
+  Examples:
+    #activity-item-101
+    #activity-item-102
+
+================================================================================
+[ 14 ] SUMMARY — INTERACTIVE ELEMENT COUNTS
+================================================================================
+
+Static (fixed-string) IDs for interactive elements:    34
+  - Dock items: 7
+  - Desktop icons: 2
+  - Dashboard controls: 3
+  - Transactions filters: 4
+  - Description filters: 4
+  - Reports today button: 1
+  - Notes modal controls: 4
+  - Calendar modal controls: 5
+  - Calculator buttons: 20
+  - Menubar buttons: 2
+  - WinChrome close (one per page, 6 pages): counted under templated below
+
+Templated IDs (one per data row, render at runtime):
+  - #tx-row-{id}                       (per flagged transaction, ~8 today)
+  - #tx-{id}-fraud-btn                 (per row on Dashboard / Transactions)
+  - #tx-{id}-clear-btn                 (per row on Dashboard / Transactions)
+  - #tx-{id}-escalate-btn              (per row on Dashboard / Transactions)
+  - #threshold-input-{id}              (5 threshold categories)
+  - #threshold-approve-btn-{id}        (rendered only for Pending status)
+  - #threshold-revise-btn-{id}         (rendered for Approved / Pending)
+  - #reports-archive-row-{date}        (per archived report date, ~6 visible)
+  - #reports-archive-download-btn-{date}
+  - #calendar-day-{YYYY-MM-DD}         (per day of selected month)
+  - #note-delete-btn-{i}               (per saved note)
+  - #{winId}-close-btn                 (one per WinChrome page, 6 total)
+
+================================================================================
+[ 15 ] PLAYWRIGHT QUICK REFERENCE
+================================================================================
+
+# Navigate via dock
+await page.locator('#dock-dashboard').click()
+await page.locator('#dock-transactions').click()
+await page.locator('#dock-description').click()
+
+# Open desktop modals
+await page.locator('#desktop-notes-icon').click()
+await page.locator('#desktop-calendar-icon').click()
+
+# Confirm fraud on a transaction (resolve tx.id from API response or row text)
+await page.locator('#tx-1-fraud-btn').click()
+
+# Approve a threshold (resolve t.id from category lookup)
+await page.locator('#threshold-approve-btn-1').click()
+
+# Edit a threshold value before approving
+await page.locator('#threshold-input-1').fill('0.85')
+await page.locator('#threshold-approve-btn-1').click()
+
+# Download a specific archived compliance report
+await page.locator('#reports-archive-download-btn-2026-04-28').click()
+
+# Filter transactions queue by Ensemble model
+await page.locator('#transactions-model-select').selectOption('ensemble')
+
+# Search the dashboard table
+await page.locator('#dashboard-search-input').fill('TXN-20240424-0064')
+
+# Add a calendar event
+await page.locator('#desktop-calendar-icon').click()
+await page.locator('#calendar-day-2026-05-15').click()
+await page.locator('#calendar-event-input').fill('Quarterly review')
+await page.locator('#calendar-add-btn').click()
+
+# Use the calculator
+await page.locator('#calc-num-7-btn').click()
+await page.locator('#calc-mul-btn').click()
+await page.locator('#calc-num-8-btn').click()
+await page.locator('#calc-eq-btn').click()
+
+# Close any page back to home
+await page.locator('#dashboard-close-btn').click()
+
+================================================================================
+End of file
+================================================================================
