@@ -12,8 +12,7 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy app source, .env, and ML scripts
-COPY .env .env
+# Copy app source, and ML scripts
 COPY app/ ./app/
 COPY ai_data_agent.py .
 COPY start.sh .
