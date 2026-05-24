@@ -27,6 +27,13 @@ const api = {
       body: JSON.stringify({ action, notes: notes || '', investigator_id: DEFAULT_INV_ID }),
     })
   },
+  chatWithAgent(txId, message) {
+    return request(API_BASE + '/transactions/' + txId + '/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message }),
+    })
+  },
   // Dashboard
   getKPIs()            { return request(API_BASE + '/dashboard/kpis') },
   getTimeSeries()      { return request(API_BASE + '/dashboard/chart/timeseries') },

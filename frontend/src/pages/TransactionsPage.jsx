@@ -23,6 +23,33 @@ export default function TransactionsPage({ onNavigate, toast }) {
 
   useEffect(() => { load() }, [load])
 
+  useEffect(() => {
+    // Setup WebSocket for Real-Time Event Streaming
+    const wsUrl = `ws://localhost:5000/rahul-aegis/ws`
+    console.log("Attempting to connect WebSocket to:", wsUrl)
+    const ws = new WebSocket(wsUrl)
+    
+    ws.onopen = () => {
+      console.log("✅ WebSocket Connected Successfully to FraudOS Backend!");
+    }
+    
+    ws.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data)
+        // Toast notification for real-time push
+        toast(`🚨 REAL-TIME ALERT: ${data.transaction_ref} ($${data.amount}) flagged!`, 'error-toast')
+        // Refresh the table instantly
+        load()
+      } catch(e) {}
+    }
+    
+    return () => {
+      if (ws.readyState === 1) {
+        ws.close()
+      }
+    }
+  }, [load, toast])
+
   function buildFilters(overrides = {}) {
     const s  = overrides.search  ?? search
     const m  = overrides.model   ?? model

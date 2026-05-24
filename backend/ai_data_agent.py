@@ -7,6 +7,31 @@ import os
 from faker import Faker
 from sklearn.ensemble import IsolationForest
 import numpy as np
+from google import genai
+from pydantic import BaseModel
+import json
+import redis.asyncio as redis
+
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
+
+# Initialize Redis client
+redis_client = redis.Redis(host='localhost', port=6379, db=0)
+
+# Setup API Keys for Rotation
+api_keys_str = os.getenv("GEMINI_API_KEYS") or os.getenv("GEMINI_API_KEY") or ""
+API_KEYS = [k.strip() for k in api_keys_str.split(",") if k.strip()]
+
+def get_gemini_client():
+    if not API_KEYS:
+        return None
+    try:
+        return genai.Client(api_key=random.choice(API_KEYS))
+    except Exception as e:
+        print(f"Warning: Could not initialize Gemini Client: {e}")
+        return None
 
 # Supabase remote connection string
 DB_CON_STR = "postgresql://postgres.uwsaqphlcrhiliklkwmb:o6UDgrZp0Y7f8ERE@aws-1-ap-southeast-2.pooler.supabase.com:5432/postgres?sslmode=require"
@@ -24,7 +49,7 @@ iso_forest.fit(baseline_data)
 
 async def generate_and_insert(pool):
     # 1. Generate realistic transaction
-    is_fraud_attempt = random.random() < 0.2  # 20% chance to simulate a fraud attempt
+    is_fraud_attempt = random.random() < 0.8  # ✨ 80% chance for rapid hackathon testing
     
     ref = f"TXN-{random.randint(1000000, 9999999)}"
     currency = "USD"
@@ -65,8 +90,33 @@ async def generate_and_insert(pool):
     ai_explanation = ""
     status = "unreviewed"
     if ensemble_score > 0.8:
-        # We simulate what an LLM would output based on the grounded data
-        ai_explanation = f"CRITICAL: High-value transaction of ${amount:,.2f} initiated from a high-risk category ({merchant_category}) in a foreign location ({location}). Device is unrecognised ({device})."
+        gemini_client = get_gemini_client()
+        if gemini_client:
+            try:
+                prompt = f"""
+                You are a senior financial fraud investigator. Analyze the following anomalous transaction and provide a concise, plain-English 1-sentence explanation of why it was flagged. 
+                Do not use model jargon like "LSTM" or "Isolation Forest".
+                
+                Transaction Details:
+                - Amount: ${amount:,.2f}
+                - Location: {location}
+                - Device: {device}
+                - Merchant Category: {merchant_category}
+                - Anomaly Score: {ensemble_score} / 1.00
+                
+                Explanation:
+                """
+                response = await gemini_client.aio.models.generate_content(
+                    model='gemini-2.5-flash',
+                    contents=prompt,
+                )
+                ai_explanation = response.text.strip()
+            except Exception as e:
+                print(f"Gemini API Error: {e}")
+                ai_explanation = f"CRITICAL: High-value transaction of ${amount:,.2f} initiated from a high-risk category ({merchant_category}) in a foreign location ({location}). Device is unrecognised ({device})."
+        else:
+            # Fallback if no API key
+            ai_explanation = f"CRITICAL: High-value transaction of ${amount:,.2f} initiated from a high-risk category ({merchant_category}) in a foreign location ({location}). Device is unrecognised ({device})."
     else:
         status = "cleared" # Automatically clear low-risk items
 
@@ -88,15 +138,21 @@ async def generate_and_insert(pool):
             round(normalized_if_score, 2), round(lstm_score, 2), ensemble_score, 
             confidence_score, ai_explanation, status, flagged_at)
             
-            # Keep database small (max 100 transactions) to never hit free tier limits
-            await conn.execute('''
-                DELETE FROM transactions 
-                WHERE id IN (
-                    SELECT id FROM transactions 
-                    ORDER BY flagged_at DESC 
-                    OFFSET 100
-                )
-            ''')
+            # Deleted cleanup script to prevent foreign key constraint violations
+            
+        # Publish real-time event to Redis
+        try:
+            alert_payload = {
+                "transaction_ref": ref,
+                "amount": amount,
+                "location": location,
+                "ensemble_score": ensemble_score,
+                "ai_explanation": ai_explanation
+            }
+            await redis_client.publish('fraud_alerts', json.dumps(alert_payload))
+        except Exception as e:
+            print(f"Redis Publish Error: {e}")
+
         print(f"[{datetime.now().strftime('%H:%M:%S')}] 🚨 FLAGGED & INJECTED: {ref} | Amount: ${amount:,.2f} | Score: {ensemble_score}")
     else:
         print(f"[{datetime.now().strftime('%H:%M:%S')}] ✅ Normal (Ignored): {ref} | Amount: ${amount:,.2f} | Score: {ensemble_score}")
